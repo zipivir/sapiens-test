@@ -1,5 +1,6 @@
 
 import axios from "axios";
+import Error from "next/error";
 
 const BE_BASE_API = "http://localhost:8000/api/v1/";
 
@@ -35,9 +36,9 @@ export const getAllProperties = async () => {
       'Content-Type': 'application/json',
     };
     const response = await axios.get(`${BE_BASE_API}properties`, { headers });
-    return response.data;
-  } catch (error:any) {
-    console.error("Error fetching cards:", error.message);
-    return [];
+    return {code: response.status, data: response.data};
+  } catch (error: any) {
+    console.error("Error fetching properties:", error);
+    return error;
   }
 };

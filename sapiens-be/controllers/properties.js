@@ -6,12 +6,14 @@ const getAll = async (req, res) => {
         const { search } = req.query;
         const properties = await Property.find({
             $or: [
+              {},
               { category: search },
               { 'address.street': search },
               { 'address.neighborhood': search },
               { 'address.city': search },
               { 'address.zip': search },
-            ]});
+            ]
+        });
         res.status(200).send(properties);
     } catch (err) {
         res.status(500).send(err.message);
@@ -39,7 +41,11 @@ const getPropertyByCategory = async (req, res) => {
 // create new property
 const createProperty = async (req, res) => {
     try {
-        const property = await Property.save(req.body);
+        const property = new Property(req.body);    
+
+        const validProperty = property.validateSync();
+        const propertyDB = await property.save();
+        console.log('property', propertyDB);
         res.status(200).send({msg: 'Property created successfully', property });
     } catch (err) {
         res.status(500).send(err.message);

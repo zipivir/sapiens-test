@@ -19,7 +19,7 @@ const propertySchema = new mongoose.Schema({
     category: {
         type: String,
         required: true,
-        default: ['Condos', 'Villas', 'Open houses', 'Lands', 'Bought']
+        default: ['Condo', 'Villa', 'Open House', 'Land', 'Bought']
     },
     price: { type: Number, required:true },
     currency: String,

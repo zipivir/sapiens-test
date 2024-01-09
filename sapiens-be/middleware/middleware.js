@@ -4,7 +4,7 @@ const { Role } = require("../models/role.js");
 
 const checkUserRole = (requiredRole) => {
     return async (req, res, next) => {
-        const token = req.headers.authorization;
+        const token = req.headers.authorization?.split('Bearer ')[1];
         if (token) {
             try {
                 const user = jwt.verify(token, 'secret_key');

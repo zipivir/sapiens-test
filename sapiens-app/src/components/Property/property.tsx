@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-// import * as Styled from "./login.styles";
+import { CardGroup, Card, Image } from 'react-bootstrap/';
+import "./property.css";
 import { getAllProperties } from "../../services/coreApiService";
 import { Link, useNavigate } from "react-router-dom";
 
 const PropertyComponent = () => {
-  const [properties, setProperties] = useState('');
+  const [properties, setProperties] = useState([]);
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
@@ -13,16 +14,18 @@ const PropertyComponent = () => {
     const fetchData = async () => {
       try {
         const res = await getAllProperties();
-      
-        if (res?.error) {
-          console.log('errr', res.error);
-          setError(res.error);
+        console.log('res', res, res.code);
+
+        if (res?.code !== 200) {
+          console.log('Error fetching data', res.message);
+          setError(res.message);
           navigate('/login');
         }
         setProperties(res.data);
-      } catch (error) {
-        console.log('errr', error);
+      } catch (error: any) {
         console.log('Error fetching data:', error);
+        setError(error.message);
+        navigate('/login');
       }
     };
 
@@ -34,16 +37,26 @@ const PropertyComponent = () => {
     };
   }, [navigate]); 
 
+  const getCurrencyIcon = (code: String) => {
+    switch (code) {
+      case 'USD':
+        return <i className="fas fa-dollar-sign"></i>; // Dollar icon
+      case 'ILS':
+        return <i className="fas fa-shekel-sign"></i>; // Shekel icon (example, replace with correct icon class)
+      default:
+        return null;
+    }
+  };
   
   return (
     localStorage.getItem('token') ? 
       <section className="h-100 gradient-form" style={{ backgroundColor: '#eee' }}>
-        <div className="container py-5 h-100">
+        <div className="container py-3 h-100">
           <div className="row d-flex justify-content-center align-items-center h-100">
-            <div className="col-xl-10">
+            <div className="col-xl-12">
               <div className="card rounded-3 text-black">
                 <div className="row g-0">
-                  <div className="col-lg-6">
+                  <div className="col-lg-12">
                     <div className="card-body p-md-5 mx-md-4">
                       <div className="text-center">
                         <img
@@ -52,6 +65,28 @@ const PropertyComponent = () => {
                           alt="logo"
                         />
                       </div>
+                      <>
+                        <CardGroup>
+                          {properties.map((property: any) => (
+                            <Card 
+                              bg={'info'}
+                              key={property._id}
+                              text={'dark'}
+                              style={{ backgroundImage: `url(${property.image_url})`, width: '18rem' }}
+                              className="mb-2"
+                            >
+                              <Card.Header>
+                                <label className="header-label">{property.category}</label>
+                                <label className="header-label">{getCurrencyIcon(property.currency)}{property.price}</label>
+                              </Card.Header>
+                              <Card.Body>
+                                {/* <Image src={property.image_url} fluid /> */}
+                                <Card.Text></Card.Text>
+                              </Card.Body>
+                            </Card>
+                          ))}
+                        </CardGroup>
+                      </>
                     </div>
                   </div>
                 </div>
