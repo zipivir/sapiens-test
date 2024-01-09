@@ -72,12 +72,12 @@ const PropertyComponent = () => {
                               bg={'info'}
                               key={property._id}
                               text={'dark'}
-                              style={{ backgroundImage: `url(${property.image_url})`, width: '18rem' }}
+                              style={{ backgroundImage: `url(${property.image_url})` }}
                               className="mb-2"
                             >
                               <Card.Header>
                                 <label className="header-label">{property.category}</label>
-                                <label className="header-label">{getCurrencyIcon(property.currency)}{property.price}</label>
+                                <label className="header-label round">{getCurrencyIcon(property.currency)}{property.price}</label>
                               </Card.Header>
                               <Card.Body>
                                 {/* <Image src={property.image_url} fluid /> */}
