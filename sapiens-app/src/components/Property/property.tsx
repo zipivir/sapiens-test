@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { CardGroup, Card, Image } from 'react-bootstrap/';
+import { CardGroup, Card, Modal, Button } from 'react-bootstrap/';
 import "./property.css";
 import { getAllProperties } from "../../services/coreApiService";
 import { Link, useNavigate } from "react-router-dom";
@@ -7,7 +7,16 @@ import { Link, useNavigate } from "react-router-dom";
 const PropertyComponent = () => {
   const [properties, setProperties] = useState([]);
   const [error, setError] = useState('');
+  const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
 
   useEffect(() => {
     // Function to fetch data from the API
@@ -65,15 +74,10 @@ const PropertyComponent = () => {
                           alt="logo"
                         />
                       </div>
-                      <>
                         <CardGroup>
                           {properties.map((property: any) => (
-                            <Card 
-                              bg={'info'}
-                              key={property._id}
-                              text={'dark'}
-                              style={{ backgroundImage: `url(${property.image_url})` }}
-                              className="mb-2"
+                            <Card onClick={handleCardClick} className="mb-2"
+                              bg={'info'} key={property._id} text={'dark'} style={{ backgroundImage: `url(${property.image_url})` }}
                             >
                               <Card.Header>
                                 <label className="header-label">{property.category}</label>
@@ -86,7 +90,19 @@ const PropertyComponent = () => {
                             </Card>
                           ))}
                         </CardGroup>
-                      </>
+                        <Modal show={showModal} onHide={handleCloseModal}>
+                          <Modal.Header closeButton>
+                            <Modal.Title>Modal Title</Modal.Title>
+                          </Modal.Header>
+                          <Modal.Body>
+                            Modal content goes here...
+                          </Modal.Body>
+                          <Modal.Footer>
+                            <Button variant="secondary" onClick={handleCloseModal}>
+                              Close
+                            </Button>
+                          </Modal.Footer>
+                        </Modal>
                     </div>
                   </div>
                 </div>
