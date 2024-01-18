@@ -1,6 +1,7 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
+const session = require('express-session');
 
 const userRoutes = require ("./routes/userRoutes.js");
 const propertyRoutes = require ("./routes/propertyRoutes.js");
@@ -20,7 +21,13 @@ mongoose.connect(uri)
     console.error('Error connecting to MongoDB:', err);
   });
 
-app.use(bodyParser.json());
+app.use(express.json());
+app.use(session({
+  secret: process.env.SECRET_KEY,
+  resave: false,
+  saveUninitialized: true,
+}));
+
 app.use(function (req, res, next) {
     express.json();
 

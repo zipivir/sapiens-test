@@ -19,11 +19,12 @@ const propertySchema = new mongoose.Schema({
     category: {
         type: String,
         required: true,
-        default: ['Condo', 'Villa', 'Open House', 'Land', 'Bought']
+        default: ['condo', 'villa', 'open_house', 'land', 'bought']
     },
     price: { type: Number, required:true },
     currency: String,
     image_url: { type: String, required: true },
+    buyer: mongoose.ObjectId,
     timestamp: { type: Date, default: Date.now }
 });
 

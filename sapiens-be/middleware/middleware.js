@@ -7,15 +7,20 @@ const checkUserRole = (requiredRole) => {
         const token = req.headers.authorization?.split('Bearer ')[1];
         if (token) {
             try {
-                const user = jwt.verify(token, 'secret_key');
+                const user = jwt.verify(token, process.env.JWT_KEY);
                 console.log('userrrr', user);
 
                 // Check if user's role matches the required role
                 if (user) {
                     const role = await Role.findOne({ _id: user.roleId });
-                    console.log('rrrrr', role);
+                    console.log('role: ', role);
+                    req.session.user = user;
+                    req.session.role = role;
                     if (role && role.name === requiredRole) {
                         next();
+                    }
+                    else {
+                        res.status(403).json({ message: 'Access denied. Insufficient permissions.' });
                     }
                 } else {
                     res.status(403).json({ message: 'Access denied. Insufficient permissions.' });
@@ -37,17 +42,21 @@ const checkUserPermission = (action) => {
         const token = req.headers.authorization?.split('Bearer ')[1];
         if (token) {
             try {
-                const user = jwt.verify(token, 'secret_key');
-                console.log('userrrr', user);
+                const user = jwt.verify(token, process.env.JWT_KEY);
+                console.log('user: ', user);
 
                 // Check if user's role matches the required role
                 if (user) {
                     const role = await Role.findOne({ _id: user.roleId });
-                    console.log('roleee', role.actions);
+                    console.log('role: ', role);
+                    req.session.user = user;
+                    req.session.role = role;
                     if (role && role.actions.includes(action)) {
                         next();
                     }
-                } else {
+                    else {
+                        res.status(403).json({ message: 'Access denied. Insufficient permissions.' });
+                    }                } else {
                     res.status(403).json({ message: 'Access denied. Insufficient permissions.' });
                 }
             } catch (error) {

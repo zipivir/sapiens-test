@@ -28,7 +28,7 @@ const login = async (req, res) => {
             return res.status(401).json({ message: 'Invalid password' });
         }
         
-        const token = jwt.sign({ id: user.id, username: user.username, roleId: user.roleId }, 'secret_key', {
+        const token = jwt.sign({ id: user.id, roleId: user.roleId }, process.env.JWT_KEY, {
             expiresIn: '15m'
         });
     
@@ -61,7 +61,6 @@ const signup = async (req, res) => {
 
         const validUser = user.validateSync();
         const userDB = await user.save();
-        console.log('uuuu', userDB);
         res.status(201).json({ msg: 'User registered successfully', user: userDB });
     } catch (err) {
         res.status(500).send(err.message);

@@ -1,19 +1,35 @@
 const { Property } = require("../models/property.js");
+const { use } = require("../routes/userRoutes.js");
 
 // GET all users
 const getAll = async (req, res) => {
     try {
         const { search } = req.query;
-        const properties = await Property.find({
-            $or: [
-              {},
-              { category: search },
-              { 'address.street': search },
-              { 'address.neighborhood': search },
-              { 'address.city': search },
-              { 'address.zip': search },
+        const {user, role} = req.session;
+
+        const regex = new RegExp(search, 'i');
+        const query = {};
+        if (role?.name !== 'admin') {
+            query.buyer = user.id;
+        }
+
+        if (search) {
+            query.$or = [
+                { category: {$regex: regex} },
+                { 'address.street': {$regex: regex} },
+                { 'address.neighborhood': {$regex: regex} },
+                { 'address.city': {$regex: regex} },
+                { 'address.zip': {$regex: regex} },
             ]
-        });
+        }
+        console.log('query: ', query);
+
+        const properties = await Property.find(query);
+        // const newProperties = properties.map(p => ({
+        //     ...p,
+        //     bought: p.buyer // === user.id,
+        //   }));
+        // console.log('kkkk', newProperties);
         res.status(200).send(properties);
     } catch (err) {
         res.status(500).send(err.message);
